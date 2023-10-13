@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
+
 @RestController()
 @RequestMapping("/users")
 public class UserController {
@@ -19,17 +21,21 @@ public class UserController {
     private IUserRepository userRepository;
 
     @GetMapping()
-    public List<UserModel> list() {
-        List<UserModel> usersList = this.userRepository.findAll();
-        return usersList;
+    public ResponseEntity list() {
+        var usersList = this.userRepository.findAll();
+        return ResponseEntity.ok().body(usersList);
     }
 
     @PostMapping()
     public ResponseEntity create(@RequestBody() UserModel user) {
         var username = this.userRepository.findByUsername(user.getUsername());
+
         if (username != null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("user already created");
         }
+
+        var passwordHash = BCrypt.withDefaults().hashToString(8, user.getPassword().toCharArray());
+        user.setPassword(passwordHash);
 
         var createdUser = this.userRepository.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
