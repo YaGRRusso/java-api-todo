@@ -1,5 +1,7 @@
 package com.yagrrusso.todolist.todo;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +20,13 @@ public class TodoController {
 
     @GetMapping()
     public ResponseEntity list() {
-        var todosList = this.todoRepository.findAll();
+        List<TodoModel> todosList = this.todoRepository.findAll();
         return ResponseEntity.ok().body(todosList);
     }
 
     @PostMapping()
     public ResponseEntity create(@RequestBody() TodoModel todo) {
-        var createdTodo = this.todoRepository.save(todo);
+        TodoModel createdTodo = this.todoRepository.save(todo);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTodo);
     }
 }

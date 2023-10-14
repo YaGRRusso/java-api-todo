@@ -22,22 +22,22 @@ public class UserController {
 
     @GetMapping()
     public ResponseEntity list() {
-        var usersList = this.userRepository.findAll();
+        List<UserModel> usersList = this.userRepository.findAll();
         return ResponseEntity.ok().body(usersList);
     }
 
     @PostMapping()
     public ResponseEntity create(@RequestBody() UserModel user) {
-        var username = this.userRepository.findByUsername(user.getUsername());
+        UserModel username = this.userRepository.findByUsername(user.getUsername());
 
         if (username != null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("user already created");
         }
 
-        var passwordHash = BCrypt.withDefaults().hashToString(8, user.getPassword().toCharArray());
+        String passwordHash = BCrypt.withDefaults().hashToString(8, user.getPassword().toCharArray());
         user.setPassword(passwordHash);
 
-        var createdUser = this.userRepository.save(user);
+        UserModel createdUser = this.userRepository.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 }
