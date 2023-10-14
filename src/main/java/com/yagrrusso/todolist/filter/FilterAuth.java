@@ -28,7 +28,7 @@ public class FilterAuth extends OncePerRequestFilter {
 
         String servletPath = request.getServletPath();
 
-        if (servletPath.equals("/todos")) {
+        if (servletPath.startsWith("/todos")) {
             String authorization = request.getHeader("authorization");
             String encodedToken = authorization.substring("Basic".length()).trim();
             byte[] decodedToken = Base64.getDecoder().decode(encodedToken);
