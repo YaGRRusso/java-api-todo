@@ -32,4 +32,12 @@ public class TodoModel {
     private LocalDateTime createdAt;
 
     private UUID userId;
+
+    public void setTitle(String title) throws Exception {
+        if (title.length() > 36) {
+            throw new Exception("title shouldn't have more than 36 characters");
+        }
+
+        this.title = title;
+    }
 }
