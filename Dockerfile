@@ -1,19 +1,23 @@
-FROM ubuntu:latest AS BUILD
+# BUILD
+FROM maven:3.8.4-openjdk-17-slim AS build
+WORKDIR /app
 
-RUN apt update
-RUN apt install openjdk-17-jdk -y
+# Copie o arquivo POM e o arquivo de origem do projeto
+COPY pom.xml .
+COPY src ./src
 
-COPY . .
+# Compile o projeto
+RUN mvn clean package
 
-RUN apt install maven -y
-RUN mvn clean install
-
+# PRODUÇÂO
 FROM openjdk:17-jdk-slim
+WORKDIR /app
 
+# Copie o arquivo JAR gerado no estágio de build para o estágio de produção
+COPY --from=build /app/target/todolist-1.0.0.jar app.jar
+
+# Exponha a porta do aplicativo (se necessário)
 EXPOSE 8080
 
-RUN ls target
-
-COPY --from=build /target/todolist-0.0.1-SNAPSHOT app.jar
-
-ENTRYPOINT [ "java", "-jar", "app.jar" ]
+# Comando para iniciar a aplicação Spring Boot
+CMD ["java", "-jar", "app.jar"]
