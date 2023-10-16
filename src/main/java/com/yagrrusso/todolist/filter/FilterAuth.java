@@ -22,13 +22,25 @@ public class FilterAuth extends OncePerRequestFilter {
     @Autowired()
     private IUserRepository userRepository;
 
+    String[] publicPaths = { "/users" };
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
         String servletPath = request.getServletPath();
+        boolean isPublic = false;
 
-        if (servletPath.startsWith("/todos")) {
+        for (String item : publicPaths) {
+            if (servletPath.startsWith(item)) {
+                isPublic = true;
+                break;
+            }
+        }
+
+        if (isPublic) {
+            filterChain.doFilter(request, response);
+        } else {
             String authorization = request.getHeader("authorization");
             String encodedToken = authorization.substring("Basic".length()).trim();
             byte[] decodedToken = Base64.getDecoder().decode(encodedToken);
@@ -52,8 +64,6 @@ public class FilterAuth extends OncePerRequestFilter {
                     response.sendError(401);
                 }
             }
-        } else {
-            filterChain.doFilter(request, response);
         }
     }
 }
