@@ -21,13 +21,13 @@ public class UserController {
     private IUserRepository userRepository;
 
     @GetMapping()
-    public ResponseEntity list() {
+    public ResponseEntity<?> list() {
         List<UserModel> usersList = this.userRepository.findAll();
         return ResponseEntity.ok().body(usersList);
     }
 
     @PostMapping()
-    public ResponseEntity create(@RequestBody() UserModel user) {
+    public ResponseEntity<?> create(@RequestBody() UserModel user) {
         UserModel username = this.userRepository.findByUsername(user.getUsername());
 
         if (username != null) {

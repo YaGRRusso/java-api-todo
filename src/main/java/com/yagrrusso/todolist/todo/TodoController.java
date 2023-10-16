@@ -26,14 +26,14 @@ public class TodoController {
     private ITodoRepository todoRepository;
 
     @GetMapping()
-    public ResponseEntity list(HttpServletRequest request) {
+    public ResponseEntity<?> list(HttpServletRequest request) {
         UUID userId = (UUID) request.getAttribute("userId");
         List<TodoModel> todosList = this.todoRepository.findByUserId(userId);
         return ResponseEntity.ok().body(todosList);
     }
 
     @PostMapping()
-    public ResponseEntity create(@RequestBody() TodoModel todo, HttpServletRequest request) {
+    public ResponseEntity<?> create(@RequestBody() TodoModel todo, HttpServletRequest request) {
         UUID userId = (UUID) request.getAttribute("userId");
         todo.setUserId(userId);
 
@@ -54,7 +54,8 @@ public class TodoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity update(@RequestBody TodoModel todo, HttpServletRequest request, @PathVariable UUID id) {
+    public ResponseEntity<?> update(@RequestBody TodoModel todo, HttpServletRequest request,
+            @PathVariable UUID id) {
         UUID userId = (UUID) request.getAttribute("userId");
         Optional<TodoModel> currentTodo = this.todoRepository.findById(id);
 
