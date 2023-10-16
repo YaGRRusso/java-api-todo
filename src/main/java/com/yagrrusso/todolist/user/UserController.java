@@ -23,6 +23,12 @@ public class UserController {
     @GetMapping()
     public ResponseEntity<?> list() {
         List<UserModel> usersList = this.userRepository.findAll();
+
+        usersList.forEach(user -> {
+            user.setId(null);
+            user.setPassword(null);
+        });
+
         return ResponseEntity.ok().body(usersList);
     }
 
